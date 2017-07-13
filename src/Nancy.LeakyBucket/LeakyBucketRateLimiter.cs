@@ -40,7 +40,7 @@ namespace Nancy.LeakyBucket
                 };
                 var container = new LeakyBucketContainer(store, config);
 
-                return container.RequestsRemaining(identifier) >= 0
+                return container.RequestsRemaining(identifier) > 0
                     ? null
                     : new Response().WithStatusCode(HttpStatusCode.TooManyRequests);
             };

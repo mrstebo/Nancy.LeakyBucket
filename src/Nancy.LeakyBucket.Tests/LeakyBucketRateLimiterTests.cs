@@ -143,12 +143,14 @@ namespace Nancy.LeakyBucket.Tests
         [Test]
         public void Should_return_too_many_requests_if_number_of_requests_exceeds_configured_value()
         {
+            var identifier = A.Fake<IClientIdentifier>();
             var store = A.Fake<IRequestStore>();
             var config = new LeakyBucketRateLimiterConfiguration
             {
                 RefreshRate = TimeSpan.FromSeconds(1),
                 MaxNumberOfRequests = 10,
-                RequestStore = store
+                RequestStore = store,
+                ClientIdentifierFunc = _ => identifier
             };
             var bootstrapper = CreateBootstrapper(config);
             var browser = new Browser(bootstrapper);
@@ -159,18 +161,14 @@ namespace Nancy.LeakyBucket.Tests
 
             Assert.AreEqual(HttpStatusCode.TooManyRequests, response.StatusCode);
         }
-
+        
         [Test]
         public void Should_return_too_many_requests_when_request_limit_reached()
         {
-            var store = new DefaultRequestStore();
-            var identifier = A.Fake<IClientIdentifier>();
             var config = new LeakyBucketRateLimiterConfiguration
             {
                 RefreshRate = TimeSpan.FromSeconds(30),
-                MaxNumberOfRequests = 4,
-                RequestStore = store,
-                ClientIdentifierFunc = _ => identifier
+                MaxNumberOfRequests = 4
             };
             var bootstrapper = CreateBootstrapper(config);
             var browser = new Browser(bootstrapper);
@@ -178,13 +176,17 @@ namespace Nancy.LeakyBucket.Tests
 
             for (var i = 0; i < 10; i++)
             {
-                var response = browser.Get("/", with => with.HttpRequest());
+                var response = browser.Get("/", with =>
+                {
+                    with.HttpRequest();
+                    with.UserHostAddress("test");
+                });
 
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                     failedRequests++;
             }
             
-            Assert.AreEqual(6, failedRequests);
+            Assert.AreEqual(7, failedRequests);
         }
     }
 }
