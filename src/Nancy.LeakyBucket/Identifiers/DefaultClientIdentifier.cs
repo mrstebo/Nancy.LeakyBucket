@@ -2,22 +2,22 @@
 {
     public class DefaultClientIdentifier : IClientIdentifier
     {
-        public string UserAgentAddressAddress { get; }
+        public string UserAgentAddress { get; }
 
         public DefaultClientIdentifier(string userAgentAddress)
         {
-            UserAgentAddressAddress = userAgentAddress;
+            UserAgentAddress = userAgentAddress;
         }
 
         public override bool Equals(object obj)
         {
             return obj is DefaultClientIdentifier &&
-                   ((DefaultClientIdentifier) obj).UserAgentAddressAddress == UserAgentAddressAddress;
+                   ((DefaultClientIdentifier) obj).UserAgentAddress == UserAgentAddress;
         }
 
         public override int GetHashCode()
         {
-            return UserAgentAddressAddress?.GetHashCode() ?? 0;
+            return UserAgentAddress?.GetHashCode() ?? 0;
         }
     }
 }
