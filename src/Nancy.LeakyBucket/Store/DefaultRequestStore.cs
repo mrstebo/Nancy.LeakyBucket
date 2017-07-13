@@ -7,9 +7,15 @@ namespace Nancy.LeakyBucket.Store
 {
     public class DefaultRequestStore : IRequestStore
     {
+        private readonly int _maxNumberOfRequests;
         private readonly object _syncObject = new object();
-        private readonly IDictionary<IClientIdentifier, List<DateTime>> _requests =
-            new ConcurrentDictionary<IClientIdentifier, List<DateTime>>();
+        private readonly IDictionary<IClientIdentifier, Queue<DateTime>> _requests =
+            new ConcurrentDictionary<IClientIdentifier, Queue<DateTime>>();
+
+        public DefaultRequestStore(int maxNumberOfRequests)
+        {
+            _maxNumberOfRequests = maxNumberOfRequests;
+        }
 
         public int NumberOfRequestsFor(IClientIdentifier identifier)
         {
@@ -26,8 +32,10 @@ namespace Nancy.LeakyBucket.Store
             lock (_syncObject)
             {
                 if (!_requests.ContainsKey(identifier))
-                    _requests.Add(identifier, new List<DateTime>());
-                _requests[identifier].Add(dateTime);
+                    _requests.Add(identifier, new Queue<DateTime>(_maxNumberOfRequests));
+                if (_requests[identifier].Count == _maxNumberOfRequests)
+                    _requests[identifier].Dequeue();
+                _requests[identifier].Enqueue(dateTime);
             }
         }
 
@@ -36,7 +44,12 @@ namespace Nancy.LeakyBucket.Store
             lock (_syncObject)
             {
                 if (_requests.ContainsKey(identifier))
-                    _requests[identifier].RemoveAll(x => CanBeRemoved(x, expiryDate));
+                {
+                    while (HasExpired(identifier, expiryDate))
+                    {
+                        _requests[identifier].Dequeue();
+                    }
+                }
                 DeleteEmptyRequestsData(identifier);
             }
         }
@@ -47,9 +60,9 @@ namespace Nancy.LeakyBucket.Store
                 _requests.Remove(identifier);
         }
 
-        private static bool CanBeRemoved(DateTime createdAt, DateTime expiryDate)
+        private bool HasExpired(IClientIdentifier identifier, DateTime expiryDate)
         {
-            return createdAt.Subtract(expiryDate).TotalMilliseconds < 0;
+            return _requests[identifier].Count > 0 && _requests[identifier].Peek() < expiryDate;
         }
     }
 }

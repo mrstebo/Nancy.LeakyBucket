@@ -13,7 +13,7 @@ namespace Nancy.LeakyBucket.Tests.Store
         [SetUp]
         public void SetUp()
         {
-            _requestStore = new DefaultRequestStore();
+            _requestStore = new DefaultRequestStore(10);
         }
 
         private IRequestStore _requestStore;
@@ -64,6 +64,19 @@ namespace Nancy.LeakyBucket.Tests.Store
             _requestStore.DeleteRequestsOlderThan(identifier, expiryDate);
 
             Assert.AreEqual(0, _requestStore.NumberOfRequestsFor(identifier));
+        }
+
+        [Test]
+        public void Should_not_surpass_the_max_number_of_requests_for_an_identifier()
+        {
+            const int maxNumberOfRequests = 5;
+            var store = new DefaultRequestStore(maxNumberOfRequests);
+            var identifier = A.Fake<IClientIdentifier>();
+
+            for (var i = 0; i < maxNumberOfRequests + 5; i++)
+                store.AddRequest(identifier, DateTime.UtcNow);
+
+            Assert.AreEqual(maxNumberOfRequests, store.NumberOfRequestsFor(identifier));
         }
     }
 }
