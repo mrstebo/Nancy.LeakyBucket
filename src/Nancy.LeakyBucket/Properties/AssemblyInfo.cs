@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Nancy.LeakyBucket")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A request limiter based on the Leaky Bucket algorithm")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("mrstebo")]
 [assembly: AssemblyProduct("Nancy.LeakyBucket")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright © mrstebo 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
