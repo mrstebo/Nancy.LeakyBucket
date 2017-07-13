@@ -28,3 +28,18 @@ public class Bootstrapper : DefaultNancyBootstrapper
     }
 }
 ```
+
+## How it works
+
+1. When a request comes in it will extract the `IClientIdentifier` from the `NancyContext` with the function specified in the configuration.
+2. It will check for any requests that have passed the specified `RefreshRate` and remove them from the `IRequestStore`.
+3. It will then add the new request to the `IRequestStore`.
+4. It will check how many requests are remaining.
+5. If it exceeds the `MaxNumberOfRequests` then it will return a **429 Too Many Requests** status code, otherwise it will continue on with the request.
+
+
+## Configuration
+
+The `LeakyBucketRateLimiterConfiguration` can specifiy an `IRequestStore`, that is set to the `DefaultRequestStore` by default, which is responsible for holding the current number of requests for each client.
+
+The `LeakyBucketRateLimiterConfiguration` can specifies a function that determines what a client is. By default it creates a `DefaultClientIdentifier` that holds a reference to the remote address.
