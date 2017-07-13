@@ -18,7 +18,7 @@ namespace Nancy.LeakyBucket
 
         private static Func<NancyContext, IClientIdentifier> DefaultClientIdentifierFunc()
         {
-            return ctx => new DefaultClientIdentifier {UserAgentAddress = ctx.Request.UserHostAddress};
+            return ctx => new DefaultClientIdentifier(ctx.Request.UserHostAddress);
         }
     }
 }
