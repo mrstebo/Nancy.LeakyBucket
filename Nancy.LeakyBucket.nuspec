@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Nancy.LeakyBucket</id>
+    <version>$version$</version>
+    <authors>mrstebo</authors>
+    <owners>mrstebo</owners>
+    <licenseUrl>https://github.com/mrstebo/Nancy.LeakyBucket/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mrstebo/Nancy.LeakyBucket</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A request limiter based on the Leaky Bucket algorithm</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>nancy leaky bucket rate limiting limiter leaky-bucket-algorithm leakybucket rate-limiter rate-limiting</tags>
+    <dependencies>
+     <dependency id="Nancy" version="1.4.3" />
+   </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Nancy.LeakyBucket\bin\$target$\Nancy.LeakyBucket.dll" target="lib" />
+  </files>
+</package>
