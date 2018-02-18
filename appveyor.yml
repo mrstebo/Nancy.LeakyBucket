@@ -30,7 +30,7 @@ build:
   project: src/Nancy.LeakyBucket.sln
 
 after_build:
-  - cmd: nuget pack src\Nancy.LeakyBucket\Nancy.LeakyBucket.csproj -IncludeReferencedProjects -Build -Version "%GitVersion_NuGetVersion%" -Prop "target=%CONFIGURATION%"
+  - cmd: nuget pack -Version "%GitVersion_NuGetVersion%" -Prop "target=%CONFIGURATION%"
 
 after_test:
   - nuget install NUnit.ConsoleRunner -Version 3.6.1 -OutputDirectory tools
